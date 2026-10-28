@@ -1,14 +1,144 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello World | Data Inoculation</title>
+  <meta name="theme-color" content="#d85a7a">
+  <title>Robotic Data Inoculation</title>
+  <meta name="description" content="Data Inoculation: shared-control data collection that pairs learned perturbations with human corrections to train more robust robot policies. UC Berkeley.">
+  <meta property="og:title" content="Robotic Data Inoculation">
+  <meta property="og:description" content="Inoculating robot demonstrations against a learner’s future mistakes.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="static/figures/overview.webp">
+  <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/style.css">
+  <script defer src="static/site.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Hello, World!</h1>
-    <p>Welcome to Data Inoculation.</p>
-  </main>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="publication-header">
+  <div class="container">
+    <h1>Robotic Data Inoculation</h1>
+    <p class="publication-tagline">Inoculating robot demonstrations against a learner’s future mistakes</p>
+    <p class="publication-authors"><span><a href="https://colinqiyangli.github.io">Qiyang Li</a></span><span><a href="https://zhouzypaul.github.io">Zhiyuan Zhou</a></span><span><a href="https://charlesxu0124.github.io">Charles Xu</a></span><span><a href="https://people.eecs.berkeley.edu/~svlevine/">Sergey Levine</a></span></p>
+    <p class="affiliation">UC Berkeley</p>
+    <nav class="publication-links" aria-label="Paper resources">
+      <a class="button" href="static/robotic-data-inoculation.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v6h5M8 13h8M8 17h6"/></svg>Paper</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <figure class="teaser wide-container">
+    <a href="static/figures/overview.webp" target="_blank" rel="noopener" aria-label="Open the Data Inoculation overview at full size"><img src="static/figures/overview.webp" width="2400" height="850" alt="Data Inoculation: a human teleoperator commands the robot while an online RL policy adds bounded perturbations. Human corrections provide recovery demonstrations. Real-robot tasks include cube balancing, cable insertion, and keycap removal." fetchpriority="high"></a>
+    <figcaption><strong class="blue">Learned perturbations.</strong> <strong class="pink">Human corrections.</strong> Better data for robot learning.</figcaption>
+  </figure>
+  <section class="section tldr-section">
+    <div class="container"><div class="tldr-box">
+      <h2>TL;DR</h2>
+      <p>We introduce <strong>Data Inoculation (DI)</strong>, a shared-control framework for collecting better robot demonstrations. A residual policy learns online to perturb human teleoperation commands, while the human continuously corrects these deviations. The resulting data contains recovery behaviors that <strong>“inoculate” the learner against its future mistakes</strong>—improving or matching downstream performance with both behavioral cloning and offline RL.</p>
+    </div></div>
+  </section>
+  <section class="section divided" id="motivation">
+    <div class="container content">
+      <h2>Can We Collect Better Data by Changing How the Robot Behaves?</h2>
+      <p>Robot policies depend on the coverage of their demonstration data. Expert demonstrations show what success looks like, but often miss the near-failure states a learned policy will encounter. Small mistakes can compound, leaving the robot in unfamiliar states without a way to recover.</p>
+      <p>Online RL explores through autonomous trial and error. DAgger-style interventions wait for a policy to make a mistake before a human corrects it. <strong>What if we could proactively collect those corrections during demonstration?</strong></p>
+      <div class="insight-box"><strong>The key idea.</strong> Let the human and a learned policy control the robot together. Expose the robot to controlled doses of policy-like mistakes, and record how the human recovers.</div>
+    </div>
+  </section>
+  <section class="section divided" id="method">
+    <div class="container content">
+      <p class="kicker">Our method</p>
+      <h2 class="accent-heading">Data Inoculation</h2>
+      <p class="section-subtitle">A human stays in the loop. A residual policy makes the data more useful.</p>
+      <article class="method-detail">
+        <h3><span class="method-number">1</span>Perturb the Human’s Commands</h3>
+        <p>At each step, the inoculative policy observes the robot and the human’s live command, then adds a bounded residual. The human reacts to the deviation through subsequent commands, pairing perturbations with corrective demonstrations.</p>
+        <div class="equation" aria-label="Executed action equals human command plus alpha times learned residual"><span><span class="equation-label">Executed action</span><i>ã</i><sub>t</sub></span><b>=</b><span class="pink"><span class="equation-label">Human command</span><i>a</i><sub>t</sub></span><b>+</b><span class="blue"><span class="equation-label">Learned perturbation</span>α Δ<sub>t</sub></span></div>
+        <p class="small">The residual is bounded so the executed action deviates from the human’s command by at most α in the L<sub>∞</sub> norm.</p>
+      </article>
+      <article class="method-detail">
+        <h3><span class="method-number">2</span>Learn During Data Collection</h3>
+        <p>An asynchronous online RL loop trains the residual policy on the growing dataset to <strong>maximize task reward</strong>. Because it shares the reward-maximizing objective used for downstream policy extraction, its deviations are expected to resemble the mistakes a learned policy would make.</p>
+        <p>Early critic errors lead to deviations that elicit recovery. As learning progresses, the residual policy can also assist the teleoperator. Perturbations are held fixed for 0.5 seconds, giving the human time to respond.</p>
+      </article>
+      <article class="method-detail featured">
+        <h3><span class="method-number">3</span>Train on the Inoculated Dataset</h3>
+        <p>Use the collected data to train an autonomous policy with <strong>behavioral cloning or offline RL</strong>. The dataset now includes both successful behavior and human corrections in states that clean teleoperation may rarely visit.</p>
+      </article>
+      <div class="insight-box blue-box"><strong>Why learn the perturbations?</strong> Random noise can spend the collection budget on irrelevant movements. DI adapts to the task, eliciting corrections where precision matters most.</div>
+    </div>
+  </section>
+  <section class="section divided" id="tasks">
+    <div class="container content">
+      <h2>Three Real-World Precision Tasks</h2>
+      <p>We evaluate DI on a Franka robot arm with a Robotiq gripper and two wrist cameras. Each task requires careful manipulation, where small errors can determine success.</p>
+      <div class="task-grid">
+        <figure><img src="static/figures/t-cube.webp" alt="A sequence of robot poses picking up two cubes and balancing them on a yellow cube." width="1000" height="563" loading="lazy"><figcaption><h3>T-Cube</h3><p>Balance two cubes diagonally on a third cube. A few millimeters of misalignment can topple the stack.</p></figcaption></figure>
+        <figure><img src="static/figures/cable.webp" alt="A sequence of robot poses inserting a USB-C cable through a narrow opening in a computer case panel." width="1000" height="563" loading="lazy"><figcaption><h3>Cable</h3><p>Pick up a USB-C cable and insert it through a case opening barely larger than the connector.</p></figcaption></figure>
+        <figure><img src="static/figures/keycap.webp" alt="A sequence of robot poses using an orange keycap puller to remove a key from a keyboard." width="1000" height="563" loading="lazy"><figcaption><h3>Keycap</h3><p>Pick up a keycap puller, hook it onto the Q key, and use controlled motions to remove the keycap.</p></figcaption></figure>
+      </div>
+    </div>
+  </section>
+  <section class="section divided" id="results">
+    <div class="container content">
+      <h2>Better Data. More Successful Policies.</h2>
+      <p>We compare DI with <strong>clean teleoperation</strong> and teleoperation with <strong>random perturbations</strong>. DI improves success rates on Cable and T-Cube, and performs similarly or slightly better on Keycap, under both behavioral cloning (BC) and offline RL.</p>
+      <figure class="result-figure"><img src="static/figures/success-rates.svg" alt="Success rates for clean, random, and DI data across Cable, T-Cube, and Keycap, for both BC and RL. DI achieves the highest mean success in all six comparisons. Exact values follow in the expandable table." loading="lazy"><figcaption>Results averaged over 9 collection seeds for T-Cube and 5 each for Cable and Keycap, with 20 evaluation rollouts per seed. Error bars show standard errors.</figcaption></figure>
+      <div class="result-highlights">
+        <p><strong><span class="baseline">35%</span> <span>→</span> 67%</strong><span>Cable · offline RL</span></p>
+        <p><strong><span class="baseline">42%</span> <span>→</span> 59%</strong><span>T-Cube · offline RL</span></p>
+        <p><strong><span class="baseline">81%</span> <span>→</span> 84%</strong><span>Keycap · offline RL</span></p>
+      </div>
+      <p class="comparison-note">Mean success rate: clean demonstrations → Data Inoculation.</p>
+      <details class="results-details"><summary>Full success rates and standard errors</summary>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Full task results"><table>
+          <caption>Success rate (%) ± standard error</caption>
+          <thead><tr><th scope="col">Task</th><th scope="col">Policy</th><th scope="col">Clean</th><th scope="col">Random</th><th scope="col">DI</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Cable</th><td>BC</td><td>37 ± 6</td><td>48 ± 9</td><td><strong>66 ± 4</strong></td></tr>
+            <tr><th scope="row">Cable</th><td>Offline RL</td><td>35 ± 7</td><td>56 ± 4</td><td><strong>67 ± 6</strong></td></tr>
+            <tr><th scope="row">T-Cube</th><td>BC</td><td>38 ± 4</td><td>40 ± 5</td><td><strong>50 ± 3</strong></td></tr>
+            <tr><th scope="row">T-Cube</th><td>Offline RL</td><td>42 ± 6</td><td>42 ± 3</td><td><strong>59 ± 2</strong></td></tr>
+            <tr><th scope="row">Keycap</th><td>BC</td><td>63 ± 9</td><td>69 ± 6</td><td><strong>72 ± 5</strong></td></tr>
+            <tr><th scope="row">Keycap</th><td>Offline RL</td><td>81 ± 6</td><td>67 ± 9</td><td><strong>84 ± 6</strong></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+    </div>
+  </section>
+  <section class="section divided">
+    <div class="container content">
+      <p class="kicker">During collection</p>
+      <h2 class="accent-heading">From Perturbing to Assisting</h2>
+      <p>On T-Cube, DI initially lowers collection success while the residual policy is untrained. As it learns, collection success rises and eventually exceeds clean and random collection. Meanwhile, the magnitude of the residual decreases.</p>
+      <figure class="result-figure"><img src="static/figures/collection.svg" alt="T-Cube data collection curves: DI success increases during training and its residual action magnitude decreases." loading="lazy"><figcaption>The residual policy learns to make smaller, more useful deviations as data collection progresses.</figcaption></figure>
+    </div>
+  </section>
+  <section class="section divided">
+    <div class="container content">
+      <p class="kicker">Understanding the data</p>
+      <h2 class="accent-heading">Corrections Where They Matter Most</h2>
+      <p>We divide T-Cube trajectories into five phases and measure where human corrections occur. DI concentrates corrective demonstrations in <strong>place/release</strong>—the critical phase where imprecise motion can knock over the cubes. Random perturbations elicit many corrections during the less demanding retreat phase.</p>
+      <figure class="result-figure recovery-figure"><img src="static/figures/corrections.webp" alt="Correction distribution across approach, grasp, transport, place/release, and retreat, with robot images illustrating each phase. DI emphasizes place/release; random perturbations emphasize retreat." width="1800" height="1050" loading="lazy"><figcaption>Learning task-dependent perturbations helps collect recovery behavior at the moments that determine success.</figcaption></figure>
+      <div class="insight-box"><strong>Better demonstrations include how to recover.</strong> DI makes data collection a shared process: the policy exposes gaps, and the human supplies the corrections.</div>
+    </div>
+  </section>
+  <section class="section divided" id="bibtex">
+    <div class="container">
+      <div class="citation-heading"><h2>BibTeX</h2><button class="copy-button" type="button" id="copy-citation">Copy citation</button></div>
+      <pre><code id="citation">@misc{li2026robotic,
+  title  = {Robotic Data Inoculation},
+  author = {Li, Qiyang and Zhou, Zhiyuan and Xu, Charles and Levine, Sergey},
+  year   = {2026}
+}</code></pre>
+      <p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+<footer><div class="container"><p>Website template adapted from <a href="https://advantage-guidance.github.io">Advantage Guidance</a> and <a href="https://nerfies.github.io">Nerfies</a> under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> license.</p></div></footer>
 </body>
 </html>
