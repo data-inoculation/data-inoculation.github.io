@@ -6,7 +6,7 @@ Buildless research project page for **Robotic Data Inoculation**, adapted from t
 
 Run `python3 -m http.server 8000 --bind 127.0.0.1` from this directory and open <http://127.0.0.1:8000>.
 
-The content and figures come from `/home/paulzhou/papers/di_paper`. The Paper button serves a local PDF compiled from that manuscript. There are no invented arXiv or code links. Fonts load from Google Fonts with local sans-serif fallbacks; all figures, styles, and scripts are served locally.
+The content and figures come from `/home/paulzhou/papers/di_paper`. The Paper button links to [the paper on arXiv](https://arxiv.org/abs/2610.39054). Fonts load from Google Fonts with local sans-serif fallbacks; all figures, styles, and scripts are served locally.
 
 ## Assets
 
