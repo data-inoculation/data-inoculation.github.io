@@ -52,7 +52,8 @@ strong { font-weight: 700; }
 .tldr-box { background: #fff3f7; border-radius: 12px; padding: 24px 30px 28px; font-size: 1.05rem; }
 .tldr-box h2 { text-align: center; color: var(--paper-primary-dark); margin-bottom: 12px; }
 .tldr-box strong, .content strong { color: var(--rose-ink); }
-.tldr-box strong.blue { color: var(--blue-ink); }
+.tldr-box strong.blue, .content strong.blue { color: var(--blue-ink); }
+.content strong.dark-grey { color: var(--text); }
 .content strong.black { color: #000; }
 .divided { position: relative; }
 .divided::before { content: ''; position: absolute; top: 0; left: max(24px, calc((100% - 960px) / 2)); right: max(24px, calc((100% - 960px) / 2)); height: 1px; background: #ece8e9; }

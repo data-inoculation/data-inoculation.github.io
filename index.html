@@ -169,7 +169,7 @@
 
   <section class="section divided" id="tasks">
     <div class="container content">
-      <h2>Three Real-World Precision Tasks</h2>
+      <h2>Real-World Precise Manipulation Tasks</h2>
       <p>We evaluate DI on a Franka robot arm with a Robotiq gripper and two wrist cameras. Each task requires careful manipulation, where small errors can determine success.</p>
       <div class="task-grid">
         <figure><img src="static/figures/t-cube.webp" alt="A sequence of robot poses picking up two cubes and balancing them on a yellow cube." width="1000" height="563" loading="lazy"><figcaption><h3>T-Cube</h3><p>Balance two cubes diagonally on a third cube. A few millimeters of misalignment can topple the stack.</p></figcaption></figure>
@@ -180,15 +180,15 @@
   </section>
   <section class="section divided" id="results">
     <div class="container content">
-      <h2>Better Data. More Successful Policies.</h2>
-      <p>We compare DI with <strong>clean teleoperation</strong> and teleoperation with <strong>random perturbations</strong>. DI improves success rates on Cable and T-Cube, and performs similarly or slightly better on Keycap, under both behavioral cloning (BC) and offline RL.</p>
+      <h2 class="accent-heading">Better Data. More Successful Policies.</h2>
+      <p>We compare DI with <strong class="black">clean teleoperation</strong> and teleoperation with <strong class="black">random perturbations</strong>. DI improves success rates under both behavioral cloning (BC) and offline RL.</p>
       <figure class="result-figure"><img src="static/figures/success-rates.svg" alt="Success rates for clean, random, and DI data across Cable, T-Cube, and Keycap, for both BC and RL. DI achieves the highest mean success in all six comparisons. Exact values follow in the expandable table." loading="lazy"><figcaption>Results averaged over 9 collection seeds for T-Cube and 5 each for Cable and Keycap, with 20 evaluation rollouts per seed. Error bars show standard errors.</figcaption></figure>
       <div class="result-highlights">
-        <p><strong><span class="baseline">35%</span> <span>→</span> 67%</strong><span>Cable · offline RL</span></p>
-        <p><strong><span class="baseline">42%</span> <span>→</span> 59%</strong><span>T-Cube · offline RL</span></p>
-        <p><strong><span class="baseline">81%</span> <span>→</span> 84%</strong><span>Keycap · offline RL</span></p>
+        <p><strong><span class="baseline">35%</span> <span>→</span> 67%</strong><span>Cable</span></p>
+        <p><strong><span class="baseline">42%</span> <span>→</span> 59%</strong><span>T-Cube</span></p>
+        <p><strong><span class="baseline">81%</span> <span>→</span> 84%</strong><span>Keycap</span></p>
       </div>
-      <p class="comparison-note">Mean success rate: clean demonstrations → Data Inoculation.</p>
+      <p class="comparison-note">Mean success rate: clean demonstrations → Data Inoculation (Offline RL).</p>
       <details class="results-details"><summary>Full success rates and standard errors</summary>
         <div class="table-scroll" tabindex="0" role="region" aria-label="Full task results"><table>
           <caption>Success rate (%) ± standard error</caption>
@@ -207,18 +207,16 @@
   </section>
   <section class="section divided">
     <div class="container content">
-      <p class="kicker">During collection</p>
       <h2 class="accent-heading">From Perturbing to Assisting</h2>
-      <p>On T-Cube, DI initially lowers collection success while the residual policy is untrained. As it learns, collection success rises and eventually exceeds clean and random collection. Meanwhile, the magnitude of the residual decreases.</p>
-      <figure class="result-figure"><img src="static/figures/collection.svg" alt="T-Cube data collection curves: DI success increases during training and its residual action magnitude decreases." loading="lazy"><figcaption>The residual policy learns to make smaller, more useful deviations as data collection progresses.</figcaption></figure>
+      <p>DI initially lowers collection success while the residual policy is untrained. As it learns, collection success rises and eventually exceeds clean and random collection. Meanwhile, the magnitude of the residual decreases.</p>
+      <figure class="result-figure"><img src="static/figures/collection.svg" alt="T-Cube data collection curves: DI success increases during training and its residual action magnitude decreases." loading="lazy"></figure>
     </div>
   </section>
   <section class="section divided">
     <div class="container content">
-      <p class="kicker">Understanding the data</p>
       <h2 class="accent-heading">Corrections Where They Matter Most</h2>
-      <p>We divide T-Cube trajectories into five phases and measure where human corrections occur. DI concentrates corrective demonstrations in <strong>place/release</strong>—the critical phase where imprecise motion can knock over the cubes. Random perturbations elicit many corrections during the less demanding retreat phase.</p>
-      <figure class="result-figure recovery-figure"><img src="static/figures/corrections.webp" alt="Correction distribution across approach, grasp, transport, place/release, and retreat, with robot images illustrating each phase. DI emphasizes place/release; random perturbations emphasize retreat." width="1800" height="1050" loading="lazy"><figcaption>Learning task-dependent perturbations helps collect recovery behavior at the moments that determine success.</figcaption></figure>
+      <p>We divide an example t-cube trajectory into five phases and measure where human corrections occur. DI concentrates corrective demonstrations in <strong>place/release</strong>—the critical phase where imprecise motion can knock over the cubes. Random perturbations elicit many corrections during the less demanding retreat phase.</p>
+      <figure class="result-figure recovery-figure"><img src="static/figures/corrections.webp" alt="Correction distribution across approach, grasp, transport, place/release, and retreat, with robot images illustrating each phase. DI emphasizes place/release; random perturbations emphasize retreat." width="1800" height="1050" loading="lazy"></figure>
       <div class="insight-box"><strong>Better demonstrations include how to recover.</strong> DI makes data collection a shared process: the policy exposes gaps, and the human supplies the corrections.</div>
     </div>
   </section>
