@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="static/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="static/style.css?v=mobile-text-size">
+  <link rel="stylesheet" href="static/style.css?v=bibtex-reference-style">
   <script defer src="static/vendor/katex/katex.min.js"></script>
   <script defer src="static/vendor/katex/contrib/auto-render.min.js"></script>
   <script defer src="static/site.js?v=matching-equation-lines"></script>
@@ -217,20 +217,17 @@
       <h2 class="accent-heading">Corrections Where They Matter Most</h2>
       <p>We divide an example t-cube trajectory into five phases and measure where human corrections occur. DI concentrates corrective demonstrations in <strong>place/release</strong>—the critical phase where imprecise motion can knock over the cubes. Random perturbations elicit many corrections during the less demanding retreat phase.</p>
       <figure class="result-figure recovery-figure"><img src="static/figures/corrections.webp" alt="Correction distribution across approach, grasp, transport, place/release, and retreat, with robot images illustrating each phase. DI emphasizes place/release; random perturbations emphasize retreat." width="1800" height="1050" loading="lazy"></figure>
-      <div class="insight-box"><strong>Better demonstrations include how to recover.</strong> DI makes data collection a shared process: the policy exposes gaps, and the human supplies the corrections.</div>
     </div>
   </section>
   <section class="section divided" id="bibtex">
-    <div class="container">
+    <div class="container citation-container">
       <div class="citation-heading"><h2>BibTeX</h2><button class="copy-button" type="button" id="copy-citation">Copy citation</button></div>
-      <pre><code id="citation">@misc{li2026robotic,
-  title         = {Robotic Data Inoculation},
-  author        = {Li, Qiyang and Zhou, Zhiyuan and Xu, Charles and Levine, Sergey},
-  year          = {2026},
-  eprint        = {2610.39054},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.RO},
-  url           = {https://arxiv.org/abs/2610.39054}
+      <pre class="bibtex-code"><code id="citation">@article{li2026robotic,
+  title   = {Robotic Data Inoculation},
+  author  = {Li, Qiyang and Zhou, Zhiyuan and Xu, Charles and Levine, Sergey},
+  journal = {arXiv preprint arXiv:2610.39054},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2610.39054}
 }</code></pre>
       <p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>
     </div>

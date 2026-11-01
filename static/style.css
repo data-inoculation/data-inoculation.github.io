@@ -138,11 +138,13 @@ th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid #eee; }
 thead { background: #f7f6f7; }
 caption { text-align: left; padding: 12px 0; color: var(--muted); }
 .recovery-figure { max-width: 820px; margin-inline: auto; }
-.citation-heading { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 18px; }
-.citation-heading h2 { margin: 0; }
+.citation-container { max-width: 768px; }
+.citation-heading { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; }
+.citation-heading h2 { margin: 0; font-size: 1.75rem; }
 .copy-button { cursor: pointer; color: var(--blue-ink); font: inherit; font-size: .85rem; background: #fff; border: 1px solid #d2dfe9; padding: 9px 16px; border-radius: 6px; min-height: 44px; }
 .copy-button:hover { background: #eff8fd; }
-pre { background: #f5f5f5; border-radius: 8px; padding: 24px; overflow-x: auto; margin: 0; line-height: 1.65; font-size: .87rem; }
+.bibtex-code { padding: 1.25rem 1.5rem; color: #cdd6f4; background: #1e1e2e; border-radius: 6px; font-family: 'Courier New', monospace; font-size: .88rem; line-height: 1.65; white-space: pre; overflow-x: auto; margin: 0; }
+.bibtex-code code { font: inherit; color: inherit; }
 .copy-status { min-height: 24px; color: var(--blue-ink); font-size: .85rem; }
 footer { background: #fafafa; padding: 32px 0; text-align: center; color: var(--muted); font-size: .85rem; }
 @media (max-width: 800px) {
@@ -168,6 +170,5 @@ footer { background: #fafafa; padding: 32px 0; text-align: center; color: var(--
   .result-highlights strong span { font-size: 1rem; }
   .result-highlights p > span { font-size: .7rem; }
   .divided::before { left: 18px; right: 18px; }
-  pre { padding: 18px; font-size: .77rem; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
