@@ -37,7 +37,7 @@
   <section class="section tldr-section">
     <div class="container"><div class="tldr-box">
       <h2>TL;DR</h2>
-      <p><strong>Data Inoculation (DI)</strong> is a new method to collect high-coverage robot demonstration data. During data collection, a <strong class="blue">residual policy</strong> adds <strong class="blue">perturbations</strong> to closed-loop human teleoperation. The residual policy is trained online on the growing dataset with RL, so it <strong class="blue">mimics mistakes</strong> a learned policy might make, and the <strong class="pink">human's continuous correction</strong> provide <strong class="pink">recovery demonstrations</strong>. This “inoculates” the dataset against the learner's mistakes and improves downstream policy performance.</p>
+      <p><strong>Data Inoculation (DI)</strong> is a new paradigm in robot learning where data collection is done by a human providing closed-loop teleoperation commands while a <strong class="blue">residual policy</strong> <strong class="blue">perturbs</strong> these commands. The residual policy is trained online on the growing dataset with RL, so it <strong class="blue">mimics mistakes</strong> a learned policy might make, and the <strong class="pink">human's continuous correction</strong> provide <strong class="pink">recovery demonstrations</strong>. This provides higher coverage and “inoculates” the dataset against the learner's mistakes and improves downstream policy performance.</p>
     </div></div>
   </section>
   <section class="section divided" id="motivation">
