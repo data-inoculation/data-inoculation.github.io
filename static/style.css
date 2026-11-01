@@ -117,7 +117,7 @@ strong { font-weight: 700; }
 .equation b { font-weight: 400; }
 .small { color: var(--muted); font-size: .9rem; }
 .task-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 21px; margin-top: 25px; }
-.task-grid img { width: 100%; aspect-ratio: 1.4; object-fit: cover; border-radius: 7px; }
+.task-grid video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; background: #000; border-radius: 7px; }
 .task-grid h3 { margin: 15px 0 8px; color: var(--blue-ink); }
 .task-grid p { font-size: .9rem; line-height: 1.6; }
 .result-figure { margin: 28px 0 20px; }
@@ -162,7 +162,6 @@ footer { background: #fafafa; padding: 32px 0; text-align: center; color: var(--
   .tldr-box, .method-detail { padding: 21px; }
   .tldr-box { font-size: 1rem; }
   .task-grid { grid-template-columns: 1fr; gap: 28px; }
-  .task-grid img { aspect-ratio: 1.7; }
   .task-grid p { font-size: 1rem; }
   .equation { gap: 4px; font-size: 1.45rem; padding-inline: 4px; }
   .equation-label { font-size: .6rem; max-width: 100px; min-height: 30px; }

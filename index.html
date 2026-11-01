@@ -172,9 +172,27 @@
       <h2>Real-World Precise Manipulation Tasks</h2>
       <p>We evaluate DI on a Franka robot arm with a Robotiq gripper and two wrist cameras. Each task requires careful manipulation, where small errors can determine success.</p>
       <div class="task-grid">
-        <figure><img src="static/figures/t-cube.webp" alt="A sequence of robot poses picking up two cubes and balancing them on a yellow cube." width="1000" height="563" loading="lazy"><figcaption><h3>T-Cube</h3><p>Balance two cubes diagonally on a third cube. A few millimeters of misalignment can topple the stack.</p></figcaption></figure>
-        <figure><img src="static/figures/cable.webp" alt="A sequence of robot poses inserting a USB-C cable through a narrow opening in a computer case panel." width="1000" height="563" loading="lazy"><figcaption><h3>Cable</h3><p>Pick up a USB-C cable and insert it through a case opening barely larger than the connector.</p></figcaption></figure>
-        <figure><img src="static/figures/keycap.webp" alt="A sequence of robot poses using an orange keycap puller to remove a key from a keyboard." width="1000" height="563" loading="lazy"><figcaption><h3>Keycap</h3><p>Pick up a keycap puller, hook it onto the Q key, and use controlled motions to remove the keycap.</p></figcaption></figure>
+        <figure>
+          <video width="1280" height="720" autoplay muted loop playsinline controls preload="metadata" poster="static/videos/t-cube-poster.webp" aria-label="Third-person view of the T-Cube robot demonstration">
+            <source src="static/videos/t-cube.mp4" type="video/mp4">
+            <a href="static/videos/t-cube.mp4">Watch the T-Cube demonstration.</a>
+          </video>
+          <figcaption><h3>T-Cube</h3><p>Balance two cubes diagonally on a third cube. A few millimeters of misalignment can topple the stack.</p></figcaption>
+        </figure>
+        <figure>
+          <video width="1280" height="720" autoplay muted loop playsinline controls preload="metadata" poster="static/videos/cable-poster.webp" aria-label="Third-person view of the cable insertion robot demonstration">
+            <source src="static/videos/cable.mp4" type="video/mp4">
+            <a href="static/videos/cable.mp4">Watch the Cable demonstration.</a>
+          </video>
+          <figcaption><h3>Cable</h3><p>Pick up a USB-C cable and insert it through a case opening barely larger than the connector.</p></figcaption>
+        </figure>
+        <figure>
+          <video width="1280" height="720" autoplay muted loop playsinline controls preload="metadata" poster="static/videos/keycap-poster.webp" aria-label="Third-person view of the keycap removal robot demonstration">
+            <source src="static/videos/keycap.mp4" type="video/mp4">
+            <a href="static/videos/keycap.mp4">Watch the Keycap demonstration.</a>
+          </video>
+          <figcaption><h3>Keycap</h3><p>Pick up a keycap puller, hook it onto the Q key, and use controlled motions to remove the keycap.</p></figcaption>
+        </figure>
       </div>
     </div>
   </section>

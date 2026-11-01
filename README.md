@@ -16,6 +16,7 @@ The content and figures come from `/home/paulzhou/papers/di_paper`. The Paper bu
 - `static/fonts/`: algorithm fonts and their GUST Font License, author credits, and source manifests.
 - `static/figures/success-rates.svg` and `collection.svg`: vector exports of the corresponding paper plots.
 - `static/figures/corrections.webp`: the paper’s correction-phase analysis.
-- Task images: optimized copies of the paper’s robot trajectory images.
+- `static/videos/`: third-person task demonstration videos for T-Cube, Cable, and Keycap, with matching poster frames. Videos use the left 1280 × 720 view from the supplied composite clips, preserving their original timing.
+- Task images: optimized copies of the paper’s robot trajectory images, retained in `static/figures/`.
 
 Template attribution is retained in the page footer (CC BY-SA 4.0). The scientific content and figures retain their original ownership.
