@@ -7,14 +7,14 @@
   <title>Robotic Data Inoculation</title>
   <meta name="description" content="Data Inoculation: shared-control data collection that pairs learned perturbations with human corrections to train more robust robot policies. UC Berkeley.">
   <meta property="og:title" content="Robotic Data Inoculation">
-  <meta property="og:description" content="Inoculating robot demonstrations against a learner’s future mistakes.">
+  <meta property="og:description" content="Fix robot demonstrations against a learner’s future mistakes.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="static/figures/overview.webp">
   <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="static/style.css?v=coverage-emphasis">
   <script defer src="static/site.js"></script>
 </head>
 <body>
@@ -22,7 +22,7 @@
 <header class="publication-header">
   <div class="container">
     <h1>Robotic Data Inoculation</h1>
-    <p class="publication-tagline">Inoculating robot demonstrations against a learner’s future mistakes</p>
+    <p class="publication-definition">[<dfn>inoculation</dfn> <em class="definition-part-of-speech">noun</em> — the introduction of a germ into the body to activate the immune system.]</p>
     <p class="publication-authors"><span><a href="https://colinqiyangli.github.io">Qiyang Li</a></span><span><a href="https://zhouzypaul.github.io">Zhiyuan Zhou</a></span><span><a href="https://charlesxu0124.github.io">Charles Xu</a></span><span><a href="https://people.eecs.berkeley.edu/~svlevine/">Sergey Levine</a></span></p>
     <p class="affiliation">UC Berkeley</p>
     <nav class="publication-links" aria-label="Paper resources">
@@ -32,21 +32,34 @@
 </header>
 <main id="main">
   <figure class="teaser wide-container">
-    <a href="static/figures/overview.webp" target="_blank" rel="noopener" aria-label="Open the Data Inoculation overview at full size"><img src="static/figures/overview.webp" width="2400" height="850" alt="Data Inoculation: a human teleoperator commands the robot while an online RL policy adds bounded perturbations. Human corrections provide recovery demonstrations. Real-robot tasks include cube balancing, cable insertion, and keycap removal." fetchpriority="high"></a>
-    <figcaption><strong class="blue">Learned perturbations.</strong> <strong class="pink">Human corrections.</strong> Better data for robot learning.</figcaption>
+    <div class="teaser-image"><img src="static/figures/overview.webp" width="2400" height="850" alt="Data Inoculation: a human teleoperator commands the robot while an online RL policy adds bounded perturbations. Human corrections provide recovery demonstrations." fetchpriority="high"></div>
   </figure>
   <section class="section tldr-section">
     <div class="container"><div class="tldr-box">
       <h2>TL;DR</h2>
-      <p>We introduce <strong>Data Inoculation (DI)</strong>, a shared-control framework for collecting better robot demonstrations. A residual policy learns online to perturb human teleoperation commands, while the human continuously corrects these deviations. The resulting data contains recovery behaviors that <strong>“inoculate” the learner against its future mistakes</strong>—improving or matching downstream performance with both behavioral cloning and offline RL.</p>
+      <p><strong>Data Inoculation (DI)</strong> is a new method to collect high-coverage robot demonstration data. During data collection, a <strong class="blue">residual policy</strong> adds <strong class="blue">perturbations</strong> to closed-loop human teleoperation. The residual policy is trained online on the growing dataset with RL, so it <strong class="blue">mimics mistakes</strong> a learned policy might make, and the <strong class="pink">human's continuous correction</strong> provide <strong class="pink">recovery demonstrations</strong>. This “inoculates” the dataset against the learner's mistakes and improves downstream policy performance.</p>
     </div></div>
   </section>
   <section class="section divided" id="motivation">
     <div class="container content">
-      <h2>Can We Collect Better Data by Changing How the Robot Behaves?</h2>
-      <p>Robot policies depend on the coverage of their demonstration data. Expert demonstrations show what success looks like, but often miss the near-failure states a learned policy will encounter. Small mistakes can compound, leaving the robot in unfamiliar states without a way to recover.</p>
-      <p>Online RL explores through autonomous trial and error. DAgger-style interventions wait for a policy to make a mistake before a human corrects it. <strong>What if we could proactively collect those corrections during demonstration?</strong></p>
-      <div class="insight-box"><strong>The key idea.</strong> Let the human and a learned policy control the robot together. Expose the robot to controlled doses of policy-like mistakes, and record how the human recovers.</div>
+      <h2>What's Wrong with Demo Data in Robotics?</h2>
+      <p>
+        Performance of robot learning systems depends highly on the data. Good data should have high coverage:
+        it should contain a wide range of states to maximize the chance that the policy generalizes to the states that it actually visits at test time.
+        In practice, collecting demonstration data is largely heuristic and ad hoc, and <strong class="black">rarely offers good coverage</strong>.
+        Without good coverage, small errors compound and the policy can quickly go into out-of-distribution states from which it cannot recover.
+        <strong>Is there a principled way to collect robot demonstration data with high coverage?</strong>
+      </p>
+      <details class="prior-solutions">
+        <summary>Previous approaches and where they fall short</summary>
+        <ol>
+          <li><strong>Collect with online Reinforcement Learning:</strong> this acquires more diverse data at the cost of safety and sample efficiency.</li>
+          <li><strong>DAgger-style interventions:</strong> a learned policy is deployed, and a human intervenes to correct it. This “patches” data <em>after the fact</em> rather than proactively collecting diverse data, relying on chance failures to trigger useful corrections. Once control switches to the human, the trajectory may quickly leave the policy’s state distribution, so only the first few transitions directly supervise its mistakes.</li>
+          <li><strong>Instrumenting the data collector to collect more "diverse" data:</strong> this is hard to do (and scale) in practice because "diverse" is not well-defined.</li>
+          <li><strong>Adding random action noise during data collection:</strong> the added noise is random and does not necessarily help increase data coverage and downstream policy performance.</li>
+        </ol>
+      </details>
+      <div class="insight-box"><strong>Key idea of Data Inoculation.</strong> Let the human and a learned policy control the robot together during data collection. Expose the robot to controlled doses of policy-like mistakes, and record how the human recovers.</div>
     </div>
   </section>
   <section class="section divided" id="method">
