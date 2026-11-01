@@ -14,8 +14,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css?v=coverage-emphasis">
-  <script defer src="static/site.js"></script>
+  <link rel="stylesheet" href="static/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="static/style.css?v=mobile-text-size">
+  <script defer src="static/vendor/katex/katex.min.js"></script>
+  <script defer src="static/vendor/katex/contrib/auto-render.min.js"></script>
+  <script defer src="static/site.js?v=matching-equation-lines"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -56,7 +59,8 @@
           <li><strong>Collect with online Reinforcement Learning:</strong> this acquires more diverse data at the cost of safety and sample efficiency.</li>
           <li><strong>DAgger-style interventions:</strong> a learned policy is deployed, and a human intervenes to correct it. This “patches” data <em>after the fact</em> rather than proactively collecting diverse data, relying on chance failures to trigger useful corrections. Once control switches to the human, the trajectory may quickly leave the policy’s state distribution, so only the first few transitions directly supervise its mistakes.</li>
           <li><strong>Instrumenting the data collector to collect more "diverse" data:</strong> this is hard to do (and scale) in practice because "diverse" is not well-defined.</li>
-          <li><strong>Adding random action noise during data collection:</strong> the added noise is random and does not necessarily help increase data coverage and downstream policy performance.</li>
+          <li><strong>Adding random action noise during data collection:</strong> inefficient because perturbations along
+            axes that barely influence task success (e.g., yaw rotation in a simple cube pick-and-place task) are uninformative.</li>
         </ol>
       </details>
       <div class="insight-box"><strong>Key idea of Data Inoculation.</strong> Let the human and a learned policy control the robot together during data collection. Expose the robot to controlled doses of policy-like mistakes, and record how the human recovers.</div>
@@ -66,25 +70,103 @@
     <div class="container content">
       <p class="kicker">Our method</p>
       <h2 class="accent-heading">Data Inoculation</h2>
-      <p class="section-subtitle">A human stays in the loop. A residual policy makes the data more useful.</p>
+      <p>DI runs two asynchronous loops: a human and a residual policy collect demonstrations together, while an RL learner trains on the growing dataset. The human stays in closed-loop control throughout collection, continuously correcting the policy’s deviations.</p>
       <article class="method-detail">
         <h3><span class="method-number">1</span>Perturb the Human’s Commands</h3>
-        <p>At each step, the inoculative policy observes the robot and the human’s live command, then adds a bounded residual. The human reacts to the deviation through subsequent commands, pairing perturbations with corrective demonstrations.</p>
-        <div class="equation" aria-label="Executed action equals human command plus alpha times learned residual"><span><span class="equation-label">Executed action</span><i>ã</i><sub>t</sub></span><b>=</b><span class="pink"><span class="equation-label">Human command</span><i>a</i><sub>t</sub></span><b>+</b><span class="blue"><span class="equation-label">Learned perturbation</span>α Δ<sub>t</sub></span></div>
-        <p class="small">The residual is bounded so the executed action deviates from the human’s command by at most α in the L<sub>∞</sub> norm.</p>
+        <p>At each step, the human provides a teleoperation command $\mathbf{a}_t$. The inoculative policy $\pi_\theta$ receives both the current observation $\mathbf{o}_t$ and $\mathbf{a}_t$, and outputs a residual $\Delta_t$. The robot executes their sum:</p>
+        <div class="equation" aria-label="Executed action equals human command plus alpha times learned residual">
+          <span><span class="equation-label">Executed action</span>$\tilde{\mathbf{a}}_t$</span>
+          <span>$=$</span>
+          <span class="pink"><span class="equation-label">Human command</span>$\mathbf{a}_t$</span>
+          <span>$+$</span>
+          <span class="blue"><span class="equation-label">Learned perturbation</span>$\alpha\Delta_t$</span>
+        </div>
+        <p class="small">The residual has unit $L_\infty$ bound, so the executed command differs from the human’s by at most $\alpha$ in each action dimension.</p>
+        <p>The human sees the resulting motion and counter-corrects through subsequent commands. This pairs perturbations with recovery behavior throughout the trajectory.</p>
+        <details class="practical-considerations">
+          <summary>Practical considerations</summary>
+          <p>We find that changing the perturbation direction too frequently makes it hard for the human to react effectively. In practice, we only predict the perturbation once every 0.5 seconds (5 control time steps at a frequency of 10 Hz). For all 5 time steps, we add the same perturbation on top of $\mathbf{a}_t$ so that the teleoperator has a chance to correct any mistake that the perturbation induces.</p>
+        </details>
       </article>
       <article class="method-detail">
-        <h3><span class="method-number">2</span>Learn During Data Collection</h3>
-        <p>An asynchronous online RL loop trains the residual policy on the growing dataset to <strong>maximize task reward</strong>. Because it shares the reward-maximizing objective used for downstream policy extraction, its deviations are expected to resemble the mistakes a learned policy would make.</p>
-        <p>Early critic errors lead to deviations that elicit recovery. As learning progresses, the residual policy can also assist the teleoperator. Perturbations are held fixed for 0.5 seconds, giving the human time to respond.</p>
-      </article>
-      <article class="method-detail featured">
-        <h3><span class="method-number">3</span>Train on the Inoculated Dataset</h3>
-        <p>Use the collected data to train an autonomous policy with <strong>behavioral cloning or offline RL</strong>. The dataset now includes both successful behavior and human corrections in states that clean teleoperation may rarely visit.</p>
+        <h3><span class="method-number">2</span>Learn Residual Policy During Data Collection</h3>
+        <p>The residual policy is learned with off-policy RL on the dataset as it is being collected. The RL learner trains a critic and a residual policy, using a learned human-command model to form the critic’s targets:</p>
+        <dl class="method-models">
+          <dt>Critic $Q_\phi$</dt>
+          <dd>
+            <p>We train a critic $Q_\phi(\mathbf{o},\tilde{\mathbf{a}})$ to estimate the value of the perturbed action $\tilde{\mathbf{a}}$ directly rather than the value of the residual action $\Delta$. This allows us to update $Q_\phi$ on any off-policy data, even as the scale of the perturbations changes during collection.
+              To obtain the Q target, we also train a human-command model $\pi_\beta$ with flow behavior cloning on the original human commands ($\mathbf{a}$) in the same growing dataset. This model approximates the next human command $\mathbf{a}'$, giving the critic loss:</p>
+            <div class="method-equation">
+              $$L(\phi) = \big(Q_\phi(\mathbf{o},\tilde{\mathbf{a}})-r -\gamma Q_{\bar\phi}(\mathbf{o}',\mathbf{a}'+\alpha\Delta')\big)^2,$$
+            </div>
+            <div class="method-targets">
+              <span>where $\mathbf{a}'\sim\pi_\beta(\cdot\mid\mathbf{o}')$,</span>
+              <span>$\Delta'\sim\pi_\theta(\cdot\mid\mathbf{o}',\mathbf{a}')$.</span>
+            </div>
+          </dd>
+          <dt>Residual policy $\pi_\theta$</dt>
+          <dd>
+            <p>Learns to maximize the critic’s value for the combined human-plus-residual action using the policy loss:</p>
+            <div class="method-equation">
+              $$L(\theta) = -\mathbb{E}_{\Delta\sim\pi_\theta(\cdot\mid\mathbf{o},\mathbf{a})}\big[ Q_\phi(\mathbf{o},\mathbf{a}+\alpha\Delta) -\lambda\lVert\Delta\rVert_2^2\big].$$
+            </div>
+            <p>The penalty $\lambda$ discourages large residuals, which helps on tasks requiring precise commands.</p>
+          </dd>
+        </dl>
+        <p>The objective is cooperative: <strong>maximize task success</strong>. Using the same reward-maximizing objective as downstream offline RL is expected to produce deviations resembling a learned policy’s mistakes. Early in training, an inaccurate critic can lead the residual policy into suboptimal states that elicit human recovery. As learning progresses, the residual policy can also assist the teleoperator and improve collection success.</p>
       </article>
       <div class="insight-box blue-box"><strong>Why learn the perturbations?</strong> Random noise can spend the collection budget on irrelevant movements. DI adapts to the task, eliciting corrections where precision matters most.</div>
+      <figure class="algorithm-figure" id="algorithm">
+        <div class="algorithm-box" aria-labelledby="algorithm-title">
+          <h3 class="algorithm-title" id="algorithm-title"><strong>Algorithm:</strong> Data Inoculation</h3>
+          <div class="algorithm-setup">
+            <p><strong>Input:</strong> Residual scale $\alpha$; residual penalty $\lambda$</p>
+            <p><strong>Output:</strong> Inoculated demonstration dataset $D$</p>
+            <p class="algorithm-init">$D\leftarrow\emptyset$; Initialize residual policy $\pi_\theta$, critic $Q_\phi$, and BC flow policy $\pi_\beta$</p>
+          </div>
+          <div class="algorithm-loops">
+            <section class="algorithm-loop algorithm-collector" aria-labelledby="algorithm-collection-title">
+              <h4 id="algorithm-collection-title">Async Data Collection Loop:</h4>
+              <div class="algorithm-block">
+                <p>$\mathbf{o}_0\leftarrow$ initial observation after reset</p>
+                <p><strong>while</strong> $t\in\{0,1,\ldots\}$ <strong>do</strong></p>
+                <div class="algorithm-block">
+                  <p>Observe $\mathbf{a}_t$ from human teleop</p>
+                  <div class="algorithm-expression">$$\Delta_t\sim\pi_\theta(\cdot\mid\mathbf{o}_t,\mathbf{a}_t)$$</div>
+                  <p>Execute $\tilde{\mathbf{a}}_t=\mathbf{a}_t+\alpha\Delta_t$</p>
+                  <p>Observe $\mathbf{o}_{t+1}$ and $r_t$</p>
+                  <div class="algorithm-expression">
+                    $$D \leftarrow D\cup \{(\mathbf{o}_t,\mathbf{a}_t,\tilde{\mathbf{a}}_t,\mathbf{o}_{t+1},r_t)\}$$
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="algorithm-loop algorithm-learner" aria-labelledby="algorithm-training-title">
+              <h4 id="algorithm-training-title">Async Training Loop:</h4>
+              <div class="algorithm-block">
+                <p>Sample a training batch $(\mathbf{o},\mathbf{a},\tilde{\mathbf{a}},\mathbf{o}',r)\sim D$</p>
+                <p>Update $Q_\phi$ with the following TD loss:</p>
+                <div class="algorithm-expression algorithm-loss">
+                  $$L(\phi) = \big(Q_\phi(\mathbf{o},\tilde{\mathbf{a}})-r -\gamma Q_{\bar\phi}(\mathbf{o}',\mathbf{a}'+\alpha\Delta')\big)^2,$$
+                </div>
+                <div class="algorithm-targets">
+                  <span>where $\mathbf{a}'\sim\pi_\beta(\cdot\mid\mathbf{o}')$,</span>
+                  <span>$\Delta'\sim\pi_\theta(\cdot\mid\mathbf{o}',\mathbf{a}')$</span>
+                </div>
+                <p>Update $\pi_\theta$ with the following policy loss:</p>
+                <div class="algorithm-expression algorithm-loss">
+                  $$L(\theta) = -\mathbb{E}_{\Delta\sim\pi_\theta(\cdot\mid\mathbf{o},\mathbf{a})}\big[ Q_\phi(\mathbf{o},\mathbf{a}+\alpha\Delta) -\lambda\lVert\Delta\rVert_2^2\big].$$
+                </div>
+                <p>Update $\pi_\beta$ with flow-matching loss using $(\mathbf{o},\mathbf{a})$</p>
+              </div>
+            </section>
+          </div>
+        </div>
+        <figcaption>Data collection and model updates run asynchronously on a shared dataset.</figcaption>
+      </figure>
     </div>
   </section>
+
   <section class="section divided" id="tasks">
     <div class="container content">
       <h2>Three Real-World Precision Tasks</h2>
