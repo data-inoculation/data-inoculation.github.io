@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="static/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="static/style.css?v=correction-phase-proportions">
+  <link rel="stylesheet" href="static/style.css?v=teaser-video-layout">
   <script defer src="static/vendor/katex/katex.min.js"></script>
   <script defer src="static/vendor/katex/contrib/auto-render.min.js"></script>
   <script defer src="static/site.js?v=matching-equation-lines"></script>
@@ -36,8 +36,11 @@
   </div>
 </header>
 <main id="main">
-  <figure class="teaser wide-container">
-    <div class="teaser-image"><img src="static/figures/overview.webp" width="2400" height="850" alt="Data Inoculation: a human teleoperator commands the robot while an online RL policy adds bounded perturbations. Human corrections provide recovery demonstrations." fetchpriority="high"></div>
+  <figure class="teaser-video wide-container">
+    <video width="1920" height="1080" autoplay muted loop playsinline controls preload="metadata" poster="static/videos/teaser-poster.webp" aria-label="Robotic Data Inoculation teaser">
+      <source src="static/videos/teaser.mp4" type="video/mp4">
+      <a href="static/videos/teaser.mp4">Watch the Robotic Data Inoculation teaser.</a>
+    </video>
   </figure>
   <section class="section tldr-section">
     <div class="container"><div class="tldr-box">
@@ -45,12 +48,15 @@
       <p><strong>Data Inoculation (DI)</strong> is a new paradigm in robot learning where data collection is done by a human providing closed-loop teleoperation commands while a <strong class="blue">residual policy</strong> <strong class="blue">perturbs</strong> these commands. The residual policy is trained online on the growing dataset with RL, so it <strong class="blue">mimics mistakes</strong> a learned policy might make, and the <strong class="pink">human's continuous correction</strong> provide <strong class="pink">recovery demonstrations</strong>. This provides higher coverage and “inoculates” the dataset against the learner's mistakes and improves downstream policy performance.</p>
     </div></div>
   </section>
+  <figure class="teaser wide-container">
+    <div class="teaser-image"><img src="static/figures/overview.webp" width="2400" height="850" alt="Data Inoculation: a human teleoperator commands the robot while an online RL policy adds bounded perturbations. Human corrections provide recovery demonstrations." loading="lazy"></div>
+  </figure>
   <section class="section divided" id="motivation">
     <div class="container content">
       <h2>What's Wrong with Demo Data in Robotics?</h2>
       <p>
-        Performance of robot learning systems depends highly on the data. Good data should have high coverage:
-        it should contain a wide range of states to maximize the chance that the policy generalizes to the states that it actually visits at test time.
+        Performance of robot learning systems depends highly on the data. Good data should have <strong class="black">high coverage</strong>:
+        it should maximize the chance of generalizing to states the policy visits at test time.
         In practice, collecting demonstration data is largely heuristic and ad hoc, and <strong class="black">rarely offers good coverage</strong>.
         Without good coverage, small errors compound and the policy can quickly go into out-of-distribution states from which it cannot recover.
         <strong>Is there a principled way to collect robot demonstration data with high coverage?</strong>
@@ -68,6 +74,159 @@
       <div class="insight-box"><strong>Key idea of Data Inoculation.</strong> Let the human and a learned policy control the robot together during data collection. Expose the robot to controlled doses of policy-like mistakes, and record how the human recovers.</div>
     </div>
   </section>
+  <section class="section divided" id="tasks">
+    <div class="container content">
+      <h2>Real-World Precise Manipulation Tasks</h2>
+      <p>We consider three real-world precise manipulation tasks, where small errors can cause the task to fail. How can we best collect demonstration data to learn robust policies on these tasks?</p>
+      <div class="task-grid">
+        <figure>
+          <figcaption><h3>T-Cube</h3><p>Balance two cubes diagonally on a third cube. Even a millimeter of misalignment can topple the stack.</p></figcaption>
+          <p class="task-video-label task-demo-label">Success example</p>
+          <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/t-cube-poster.webp?v=clean-source" aria-label="Third-person view of the T-Cube robot demonstration">
+            <source src="static/videos/t-cube.mp4?v=clean-source" type="video/mp4">
+            <a href="static/videos/t-cube.mp4?v=clean-source">Watch the T-Cube demonstration.</a>
+          </video>
+          <div class="task-failure failure-carousel" role="region" aria-roledescription="carousel" aria-label="T-Cube failure examples">
+            <div class="failure-header">
+              <p class="task-video-label">Failure examples</p>
+              <div class="failure-controls">
+                <button type="button" class="failure-prev" aria-label="Previous T-Cube failure" aria-controls="t-cube-failures"><span aria-hidden="true">←</span></button>
+                <span class="failure-count" aria-live="polite" aria-atomic="true">1 / 4</span>
+                <button type="button" class="failure-next" aria-label="Next T-Cube failure" aria-controls="t-cube-failures"><span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <div id="t-cube-failures" class="failure-slides">
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="1 of 4">
+                <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/t-cube-failure-2-poster.webp" aria-label="Third-person view of the first T-Cube failure">
+                  <source src="static/videos/t-cube-failure-2.mp4" type="video/mp4">
+                  <a href="static/videos/t-cube-failure-2.mp4">Watch the first T-Cube failure example.</a>
+                </video>
+                <p class="task-video-caption">Both cubes topple off the base after release.</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="2 of 4" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/t-cube-failure-poster.webp?v=clean-source" aria-label="Third-person view of the second T-Cube failure">
+                  <source src="static/videos/t-cube-failure.mp4?v=clean-source" type="video/mp4">
+                  <a href="static/videos/t-cube-failure.mp4?v=clean-source">Watch the second T-Cube failure example.</a>
+                </video>
+                <p class="task-video-caption">Red cube topple off the base after release.</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="3 of 4" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/t-cube-failure-4-poster.webp" aria-label="Third-person view of the third T-Cube failure">
+                  <source src="static/videos/t-cube-failure-4.mp4" type="video/mp4">
+                  <a href="static/videos/t-cube-failure-4.mp4">Watch the third T-Cube failure example.</a>
+                </video>
+                <p class="task-video-caption">Pink cube topple off the base after release.</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="4 of 4" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/t-cube-failure-3-poster.webp" aria-label="Third-person view of the fourth T-Cube failure">
+                  <source src="static/videos/t-cube-failure-3.mp4" type="video/mp4">
+                  <a href="static/videos/t-cube-failure-3.mp4">Watch the fourth T-Cube failure example.</a>
+                </video>
+                <p class="task-video-caption">Failure to pick up the cubes</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <figure>
+          <figcaption><h3>Cable</h3><p>Pick up a USB-C cable and insert it through a case opening barely larger than the connector.</p></figcaption>
+          <p class="task-video-label task-demo-label">Success example</p>
+          <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/cable-poster.webp?v=clean-source" aria-label="Third-person view of the cable insertion robot demonstration">
+            <source src="static/videos/cable.mp4?v=clean-source" type="video/mp4">
+            <a href="static/videos/cable.mp4?v=clean-source">Watch the Cable demonstration.</a>
+          </video>
+          <div class="task-failure failure-carousel" role="region" aria-roledescription="carousel" aria-label="Cable failure examples">
+            <div class="failure-header">
+              <p class="task-video-label">Failure examples</p>
+              <div class="failure-controls">
+                <button type="button" class="failure-prev" aria-label="Previous Cable failure" aria-controls="cable-failures"><span aria-hidden="true">←</span></button>
+                <span class="failure-count" aria-live="polite" aria-atomic="true">1 / 2</span>
+                <button type="button" class="failure-next" aria-label="Next Cable failure" aria-controls="cable-failures"><span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <div id="cable-failures" class="failure-slides">
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="1 of 2">
+                <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/cable-failure-poster.webp?v=clean-source" aria-label="Third-person view of a Cable failure">
+                  <source src="static/videos/cable-failure.mp4?v=clean-source" type="video/mp4">
+                  <a href="static/videos/cable-failure.mp4?v=clean-source">Watch the Cable failure example.</a>
+                </video>
+                <p class="task-video-caption">The connector misses the case opening.</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="2 of 2" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/cable-failure-2-poster.webp" aria-label="Third-person view of a second Cable failure">
+                  <source src="static/videos/cable-failure-2.mp4" type="video/mp4">
+                  <a href="static/videos/cable-failure-2.mp4">Watch the second Cable failure example.</a>
+                </video>
+                <p class="task-video-caption">The gripper misses the cable during pickup.</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+        <figure>
+          <figcaption><h3>Keycap</h3><p>Pick up a keycap puller tool, hook it onto the Q key, and use precise and controlled motions with some wiggling to loosen and remove the keycap.</p></figcaption>
+          <p class="task-video-label task-demo-label">Success example</p>
+          <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/keycap-poster.webp?v=stable-release" aria-label="Third-person view of the keycap removal robot demonstration">
+            <source src="static/videos/keycap.mp4?v=stable-release" type="video/mp4">
+            <a href="static/videos/keycap.mp4?v=stable-release">Watch the Keycap demonstration.</a>
+          </video>
+          <div class="task-failure failure-carousel" role="region" aria-roledescription="carousel" aria-label="Keycap failure examples">
+            <div class="failure-header">
+              <p class="task-video-label">Failure examples</p>
+              <div class="failure-controls">
+                <button type="button" class="failure-prev" aria-label="Previous Keycap failure" aria-controls="keycap-failures"><span aria-hidden="true">←</span></button>
+                <span class="failure-count" aria-live="polite" aria-atomic="true">1 / 6</span>
+                <button type="button" class="failure-next" aria-label="Next Keycap failure" aria-controls="keycap-failures"><span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <div id="keycap-failures" class="failure-slides">
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="1 of 6">
+                <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/keycap-failure-4-poster.webp?v=trim-first-four" aria-label="Third-person view of the first Keycap failure">
+                  <source src="static/videos/keycap-failure-4.mp4?v=trim-first-four" type="video/mp4">
+                  <a href="static/videos/keycap-failure-4.mp4?v=trim-first-four">Watch the first Keycap failure example.</a>
+                </video>
+                <p class="task-video-caption">The keycap pops off and flies away.</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="2 of 6" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-poster.webp?v=failure-633" aria-label="Third-person view of the second Keycap failure">
+                  <source src="static/videos/keycap-failure.mp4?v=failure-633" type="video/mp4">
+                  <a href="static/videos/keycap-failure.mp4?v=failure-633">Watch the second Keycap failure example.</a>
+                </video>
+                <p class="task-video-caption">Cannot insert puller at the right angle</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="3 of 6" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-2-poster.webp" aria-label="Third-person view of the third Keycap failure">
+                  <source src="static/videos/keycap-failure-2.mp4" type="video/mp4">
+                  <a href="static/videos/keycap-failure-2.mp4">Watch the third Keycap failure example.</a>
+                </video>
+                <p class="task-video-caption">The angle is wrong so the puller flies away</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="4 of 6" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-3-poster.webp" aria-label="Third-person view of the fourth Keycap failure">
+                  <source src="static/videos/keycap-failure-3.mp4" type="video/mp4">
+                  <a href="static/videos/keycap-failure-3.mp4">Watch the fourth Keycap failure example.</a>
+                </video>
+                <p class="task-video-caption">The robot fails to pull the keycap up</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="5 of 6" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-5-poster.webp?v=trim-first-four" aria-label="Third-person view of the fifth Keycap failure">
+                  <source src="static/videos/keycap-failure-5.mp4?v=trim-first-four" type="video/mp4">
+                  <a href="static/videos/keycap-failure-5.mp4?v=trim-first-four">Watch the fifth Keycap failure example.</a>
+                </video>
+                <p class="task-video-caption">The puller tilts sideways without removing the keycap.</p>
+              </div>
+              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="6 of 6" hidden>
+                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-6-poster.webp?v=trim-first-four" aria-label="Third-person view of the sixth Keycap failure">
+                  <source src="static/videos/keycap-failure-6.mp4?v=trim-first-four" type="video/mp4">
+                  <a href="static/videos/keycap-failure-6.mp4?v=trim-first-four">Watch the sixth Keycap failure example.</a>
+                </video>
+                <p class="task-video-caption">The robot lifts the keycap, but smashes it against the keyboard</p>
+              </div>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <section class="section divided" id="method">
     <div class="container content">
       <p class="kicker">Our method</p>
@@ -92,12 +251,11 @@
       </article>
       <article class="method-detail">
         <h3><span class="method-number">2</span>Learn Residual Policy During Data Collection</h3>
-        <p>The residual policy is learned with off-policy RL on the growing dataset, with a cooperative objective: <strong>maximize task success</strong>. Using the same reward-maximizing objective as downstream offline RL is expected to produce deviations resembling a learned policy’s mistakes. Early in training, an inaccurate critic can lead the residual policy into suboptimal states that elicit human recovery. As learning progresses, the residual policy can also assist the teleoperator and improve collection success.</p>
+        <p>The residual policy is learned with off-policy RL on the growing dataset to <strong>maximize task success</strong>. Early in training, an inaccurate critic is expected to produce deviations resembling a learned policy’s mistakes that elicit human recovery. As learning progresses, the residual policy can also assist the teleoperator and improve collection success.</p>
         <dl class="method-models">
           <dt>Critic $Q_\phi$</dt>
           <dd>
-            <p>We train a critic $Q_\phi(\mathbf{o},\tilde{\mathbf{a}})$ to estimate the value of the perturbed action $\tilde{\mathbf{a}}$ directly rather than the value of the residual action $\Delta$. This allows us to update $Q_\phi$ on any off-policy data, even as the scale of the perturbations changes during collection.
-              To obtain the Q target, we also train a human-command model $\pi_\beta$ with flow behavior cloning on the original human commands ($\mathbf{a}$) in the same growing dataset. This model approximates the next human command $\mathbf{a}'$, giving the critic loss:</p>
+            <p>We train a critic $Q_\phi(\mathbf{o},\tilde{\mathbf{a}})$ to estimate the value of the perturbed action $\tilde{\mathbf{a}}$ directly rather than the value of the residual action $\Delta$. This allows us to update $Q_\phi$ as the scale of the perturbations changes during collection. To obtain the Q target, we also train a human-command model $\pi_\beta$ with flow behavior cloning on the original human commands ($\mathbf{a}$). This model approximates the next human command $\mathbf{a}'$, giving the critic loss:</p>
             <div class="method-equation">
               $$L(\phi) = \big(Q_\phi(\mathbf{o},\tilde{\mathbf{a}})-r -\gamma Q_{\bar\phi}(\mathbf{o}',\mathbf{a}'+\alpha\Delta')\big)^2,$$
             </div>
@@ -168,158 +326,6 @@
     </div>
   </section>
 
-  <section class="section divided" id="tasks">
-    <div class="container content">
-      <h2>Real-World Precise Manipulation Tasks</h2>
-      <p>We evaluate DI on a Franka robot arm with a Robotiq gripper and two wrist cameras. Each task requires careful manipulation, where small errors can determine success.</p>
-      <div class="task-grid">
-        <figure>
-          <figcaption><h3>T-Cube</h3><p>Balance two cubes diagonally on a third cube. Even a millimeter of misalignment can topple the stack.</p></figcaption>
-          <p class="task-video-label task-demo-label">Task demonstration</p>
-          <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/t-cube-poster.webp?v=clean-source" aria-label="Third-person view of the T-Cube robot demonstration">
-            <source src="static/videos/t-cube.mp4?v=clean-source" type="video/mp4">
-            <a href="static/videos/t-cube.mp4?v=clean-source">Watch the T-Cube demonstration.</a>
-          </video>
-          <div class="task-failure failure-carousel" role="region" aria-roledescription="carousel" aria-label="T-Cube failure examples">
-            <div class="failure-header">
-              <p class="task-video-label">Failure examples</p>
-              <div class="failure-controls">
-                <button type="button" class="failure-prev" aria-label="Previous T-Cube failure" aria-controls="t-cube-failures"><span aria-hidden="true">←</span></button>
-                <span class="failure-count" aria-live="polite" aria-atomic="true">1 / 4</span>
-                <button type="button" class="failure-next" aria-label="Next T-Cube failure" aria-controls="t-cube-failures"><span aria-hidden="true">→</span></button>
-              </div>
-            </div>
-            <div id="t-cube-failures" class="failure-slides">
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="1 of 4">
-                <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/t-cube-failure-2-poster.webp" aria-label="Third-person view of the first T-Cube failure">
-                  <source src="static/videos/t-cube-failure-2.mp4" type="video/mp4">
-                  <a href="static/videos/t-cube-failure-2.mp4">Watch the first T-Cube failure example.</a>
-                </video>
-                <p class="task-video-caption">Both cubes topple off the base after release.</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="2 of 4" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/t-cube-failure-poster.webp?v=clean-source" aria-label="Third-person view of the second T-Cube failure">
-                  <source src="static/videos/t-cube-failure.mp4?v=clean-source" type="video/mp4">
-                  <a href="static/videos/t-cube-failure.mp4?v=clean-source">Watch the second T-Cube failure example.</a>
-                </video>
-                <p class="task-video-caption">Red cube topple off the base after release.</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="3 of 4" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/t-cube-failure-4-poster.webp" aria-label="Third-person view of the third T-Cube failure">
-                  <source src="static/videos/t-cube-failure-4.mp4" type="video/mp4">
-                  <a href="static/videos/t-cube-failure-4.mp4">Watch the third T-Cube failure example.</a>
-                </video>
-                <p class="task-video-caption">Pink cube topple off the base after release.</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="4 of 4" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/t-cube-failure-3-poster.webp" aria-label="Third-person view of the fourth T-Cube failure">
-                  <source src="static/videos/t-cube-failure-3.mp4" type="video/mp4">
-                  <a href="static/videos/t-cube-failure-3.mp4">Watch the fourth T-Cube failure example.</a>
-                </video>
-                <p class="task-video-caption">Failure to pick up the cubes</p>
-              </div>
-            </div>
-          </div>
-        </figure>
-        <figure>
-          <figcaption><h3>Cable</h3><p>Pick up a USB-C cable and insert it through a case opening barely larger than the connector.</p></figcaption>
-          <p class="task-video-label task-demo-label">Task demonstration</p>
-          <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/cable-poster.webp?v=clean-source" aria-label="Third-person view of the cable insertion robot demonstration">
-            <source src="static/videos/cable.mp4?v=clean-source" type="video/mp4">
-            <a href="static/videos/cable.mp4?v=clean-source">Watch the Cable demonstration.</a>
-          </video>
-          <div class="task-failure failure-carousel" role="region" aria-roledescription="carousel" aria-label="Cable failure examples">
-            <div class="failure-header">
-              <p class="task-video-label">Failure examples</p>
-              <div class="failure-controls">
-                <button type="button" class="failure-prev" aria-label="Previous Cable failure" aria-controls="cable-failures"><span aria-hidden="true">←</span></button>
-                <span class="failure-count" aria-live="polite" aria-atomic="true">1 / 2</span>
-                <button type="button" class="failure-next" aria-label="Next Cable failure" aria-controls="cable-failures"><span aria-hidden="true">→</span></button>
-              </div>
-            </div>
-            <div id="cable-failures" class="failure-slides">
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="1 of 2">
-                <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/cable-failure-poster.webp?v=clean-source" aria-label="Third-person view of a Cable failure">
-                  <source src="static/videos/cable-failure.mp4?v=clean-source" type="video/mp4">
-                  <a href="static/videos/cable-failure.mp4?v=clean-source">Watch the Cable failure example.</a>
-                </video>
-                <p class="task-video-caption">The connector misses the case opening.</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="2 of 2" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/cable-failure-2-poster.webp" aria-label="Third-person view of a second Cable failure">
-                  <source src="static/videos/cable-failure-2.mp4" type="video/mp4">
-                  <a href="static/videos/cable-failure-2.mp4">Watch the second Cable failure example.</a>
-                </video>
-                <p class="task-video-caption">The gripper misses the cable during pickup.</p>
-              </div>
-            </div>
-          </div>
-        </figure>
-        <figure>
-          <figcaption><h3>Keycap</h3><p>Pick up a keycap puller tool, hook it onto the Q key, and use precise and controlled motions with some wiggling to loosen and remove the keycap.</p></figcaption>
-          <p class="task-video-label task-demo-label">Task demonstration</p>
-          <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/keycap-poster.webp?v=stable-release" aria-label="Third-person view of the keycap removal robot demonstration">
-            <source src="static/videos/keycap.mp4?v=stable-release" type="video/mp4">
-            <a href="static/videos/keycap.mp4?v=stable-release">Watch the Keycap demonstration.</a>
-          </video>
-          <div class="task-failure failure-carousel" role="region" aria-roledescription="carousel" aria-label="Keycap failure examples">
-            <div class="failure-header">
-              <p class="task-video-label">Failure examples</p>
-              <div class="failure-controls">
-                <button type="button" class="failure-prev" aria-label="Previous Keycap failure" aria-controls="keycap-failures"><span aria-hidden="true">←</span></button>
-                <span class="failure-count" aria-live="polite" aria-atomic="true">1 / 6</span>
-                <button type="button" class="failure-next" aria-label="Next Keycap failure" aria-controls="keycap-failures"><span aria-hidden="true">→</span></button>
-              </div>
-            </div>
-            <div id="keycap-failures" class="failure-slides">
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="1 of 6">
-                <video width="1280" height="720" autoplay muted playsinline controls preload="auto" poster="static/videos/keycap-failure-4-poster.webp?v=trim-first-four" aria-label="Third-person view of the first Keycap failure">
-                  <source src="static/videos/keycap-failure-4.mp4?v=trim-first-four" type="video/mp4">
-                  <a href="static/videos/keycap-failure-4.mp4?v=trim-first-four">Watch the first Keycap failure example.</a>
-                </video>
-                <p class="task-video-caption">The keycap pops off and flies away.</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="2 of 6" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-poster.webp?v=failure-633" aria-label="Third-person view of the second Keycap failure">
-                  <source src="static/videos/keycap-failure.mp4?v=failure-633" type="video/mp4">
-                  <a href="static/videos/keycap-failure.mp4?v=failure-633">Watch the second Keycap failure example.</a>
-                </video>
-                <p class="task-video-caption">Cannot insert puller at the right angle</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="3 of 6" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-2-poster.webp" aria-label="Third-person view of the third Keycap failure">
-                  <source src="static/videos/keycap-failure-2.mp4" type="video/mp4">
-                  <a href="static/videos/keycap-failure-2.mp4">Watch the third Keycap failure example.</a>
-                </video>
-                <p class="task-video-caption">The angle is wrong so the puller flies away</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="4 of 6" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-3-poster.webp" aria-label="Third-person view of the fourth Keycap failure">
-                  <source src="static/videos/keycap-failure-3.mp4" type="video/mp4">
-                  <a href="static/videos/keycap-failure-3.mp4">Watch the fourth Keycap failure example.</a>
-                </video>
-                <p class="task-video-caption">The robot fails to pull the keycap up</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="5 of 6" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-5-poster.webp?v=trim-first-four" aria-label="Third-person view of the fifth Keycap failure">
-                  <source src="static/videos/keycap-failure-5.mp4?v=trim-first-four" type="video/mp4">
-                  <a href="static/videos/keycap-failure-5.mp4?v=trim-first-four">Watch the fifth Keycap failure example.</a>
-                </video>
-                <p class="task-video-caption">The puller tilts sideways without removing the keycap.</p>
-              </div>
-              <div class="failure-slide" role="group" aria-roledescription="slide" aria-label="6 of 6" hidden>
-                <video width="1280" height="720" muted playsinline controls preload="none" poster="static/videos/keycap-failure-6-poster.webp?v=trim-first-four" aria-label="Third-person view of the sixth Keycap failure">
-                  <source src="static/videos/keycap-failure-6.mp4?v=trim-first-four" type="video/mp4">
-                  <a href="static/videos/keycap-failure-6.mp4?v=trim-first-four">Watch the sixth Keycap failure example.</a>
-                </video>
-                <p class="task-video-caption">The robot lifts the keycap, but smashes it against the keyboard</p>
-              </div>
-            </div>
-          </div>
-        </figure>
-      </div>
-    </div>
-  </section>
   <section class="section divided" id="results">
     <div class="container content">
       <h2 class="accent-heading">Better Data. More Successful Policies.</h2>

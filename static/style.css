@@ -42,7 +42,9 @@ strong { font-weight: 700; }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 28px; padding: 8px 20px; min-height: 44px; background: #363636; color: #fff; line-height: 1.5; transition: background .15s; }
 .button svg { width: 18px; height: 18px; }
 .button:hover { background: var(--rose-ink); color: #fff; text-decoration: none; }
-.teaser { margin-top: 8px; }
+.teaser-video { margin-top: 8px; }
+.teaser-video video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; border-radius: 7px; }
+.teaser { margin-bottom: 45px; }
 .teaser-image { width: calc(100% / 1.695); margin-inline: auto; overflow: hidden; }
 .teaser img { width: 169.5%; max-width: none; }
 .pink { color: var(--rose-ink); }
@@ -173,6 +175,8 @@ footer { background: #fafafa; padding: 32px 0; text-align: center; color: var(--
 }
 @media (max-width: 700px) {
   .container, .wide-container { width: calc(100% - 36px); }
+  .teaser.wide-container, .teaser-image { width: 100%; }
+  .teaser { margin-bottom: 36px; }
   .publication-header { padding-top: 36px; }
   .publication-header h1 { font-size: 2.1rem; }
   .publication-tagline { font-size: 1.13rem; max-width: 480px; }

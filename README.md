@@ -18,6 +18,8 @@ Keycap carousel order is asset 4, original failure, asset 2, asset 3, asset 5, a
 
 ## Assets
 
+- `static/videos/teaser.mp4`: the supplied 34-second `Robotic_Data_Inoculation_Combined (1).mp4`, preserved at 1080p with its original H.264 stream and remuxed for fast-start playback. It appears above the TL;DR with muted autoplay, looping, and native controls. `teaser-poster.webp` is its opening frame. The overview diagram follows the TL;DR and fills the viewport width on mobile; the task videos precede the method section.
+
 - `static/figures/overview.webp`: the paper’s `Data_Inoculation.pdf`, rasterized for the web.
 - The algorithm is HTML with LaTeX equations transcribed from the paper. Its two loops stack on small screens, and equations use line breaks and fit their available width rather than scrolling.
 - `static/vendor/katex/`: KaTeX 0.16.9, its auto-render extension, fonts, and MIT license.
