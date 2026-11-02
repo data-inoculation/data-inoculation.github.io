@@ -15,10 +15,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="static/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="static/style.css?v=teaser-mobile-alignment">
+  <link rel="stylesheet" href="static/style.css?v=compact-dictionary">
   <script defer src="static/vendor/katex/katex.min.js"></script>
   <script defer src="static/vendor/katex/contrib/auto-render.min.js"></script>
-  <script defer src="static/site.js?v=matching-equation-lines"></script>
+  <script defer src="static/site.js?v=dictionary-pronunciation"></script>
   <script defer src="static/task-videos.js?v=independent-playback"></script>
   <script defer src="static/correction-videos.js?v=automatic-playback"></script>
 </head>
@@ -27,7 +27,13 @@
 <header class="publication-header">
   <div class="container">
     <h1>Robotic Data Inoculation</h1>
-    <p class="publication-definition">[<dfn>inoculation</dfn> <em class="definition-part-of-speech">noun</em> — the introduction of a germ into the body to activate the immune system.]</p>
+    <p class="publication-definition">
+      <span class="definition-term"><dfn>inoculation</dfn> <em class="definition-part-of-speech">noun</em>
+        <button type="button" class="pronunciation-button" id="pronounce-inoculation" aria-label="Hear inoculation pronounced" aria-describedby="pronunciation-status" title="Pronounce inoculation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4z"/><path d="M15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></svg>
+        </button></span> — the introduction of a germ into the body to activate the immune system.
+      <span class="visually-hidden" id="pronunciation-status" role="status"></span>
+    </p>
     <p class="publication-authors"><span><a href="https://colinqiyangli.github.io">Qiyang Li</a></span><span><a href="https://zhouzypaul.github.io">Zhiyuan Zhou</a></span><span><a href="https://charlesxu0124.github.io">Charles Xu</a></span><span><a href="https://people.eecs.berkeley.edu/~svlevine/">Sergey Levine</a></span></p>
     <p class="affiliation">UC Berkeley</p>
     <nav class="publication-links" aria-label="Paper resources">

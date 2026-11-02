@@ -1,5 +1,37 @@
 'use strict';
 
+const pronunciationButton = document.getElementById('pronounce-inoculation');
+const pronunciationStatus = document.getElementById('pronunciation-status');
+pronunciationButton?.addEventListener('click', () => {
+  if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+    pronunciationStatus.textContent = 'Pronunciation is unavailable in this browser. Say: ih-nok-yuh-LAY-shun.';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const pronunciation = new SpeechSynthesisUtterance('inoculation');
+  pronunciation.lang = 'en-US';
+  pronunciation.rate = 0.85;
+  const voices = window.speechSynthesis.getVoices();
+  const voice = voices.find((voice) => voice.lang === 'en-US')
+    || voices.find((voice) => voice.lang.startsWith('en'));
+  if (voice) pronunciation.voice = voice;
+  pronunciation.onstart = () => {
+    pronunciationButton.setAttribute('aria-busy', 'true');
+    pronunciationStatus.textContent = 'Playing pronunciation of inoculation.';
+  };
+  pronunciation.onend = () => {
+    pronunciationButton.removeAttribute('aria-busy');
+    pronunciationStatus.textContent = '';
+  };
+  pronunciation.onerror = (event) => {
+    pronunciationButton.removeAttribute('aria-busy');
+    if (event.error !== 'canceled' && event.error !== 'interrupted') {
+      pronunciationStatus.textContent = 'Audio is unavailable. Say: ih-nok-yuh-LAY-shun.';
+    }
+  };
+  window.speechSynthesis.speak(pronunciation);
+});
+
 renderMathInElement(document.body, {
   delimiters: [
     { left: '$$', right: '$$', display: true },
