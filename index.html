@@ -91,7 +91,7 @@
       </article>
       <article class="method-detail">
         <h3><span class="method-number">2</span>Learn Residual Policy During Data Collection</h3>
-        <p>The residual policy is learned with off-policy RL on the dataset as it is being collected. The RL learner trains a critic and a residual policy, using a learned human-command model to form the critic’s targets:</p>
+        <p>The residual policy is learned with off-policy RL on the growing dataset, with a cooperative objective: <strong>maximize task success</strong>. Using the same reward-maximizing objective as downstream offline RL is expected to produce deviations resembling a learned policy’s mistakes. Early in training, an inaccurate critic can lead the residual policy into suboptimal states that elicit human recovery. As learning progresses, the residual policy can also assist the teleoperator and improve collection success.</p>
         <dl class="method-models">
           <dt>Critic $Q_\phi$</dt>
           <dd>
@@ -114,7 +114,6 @@
             <p>The penalty $\lambda$ discourages large residuals, which helps on tasks requiring precise commands.</p>
           </dd>
         </dl>
-        <p>The objective is cooperative: <strong>maximize task success</strong>. Using the same reward-maximizing objective as downstream offline RL is expected to produce deviations resembling a learned policy’s mistakes. Early in training, an inaccurate critic can lead the residual policy into suboptimal states that elicit human recovery. As learning progresses, the residual policy can also assist the teleoperator and improve collection success.</p>
       </article>
       <div class="insight-box blue-box"><strong>Why learn the perturbations?</strong> Random noise can spend the collection budget on irrelevant movements. DI adapts to the task, eliciting corrections where precision matters most.</div>
       <figure class="algorithm-figure" id="algorithm">
