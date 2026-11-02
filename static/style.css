@@ -118,8 +118,24 @@ strong { font-weight: 700; }
 .small { color: var(--muted); font-size: .9rem; }
 .task-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 21px; margin-top: 25px; }
 .task-grid video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; background: #000; border-radius: 7px; }
-.task-grid h3 { margin: 15px 0 8px; color: var(--blue-ink); }
+.task-video-frame { position: relative; }
+.task-video-speed { position: absolute; top: 10px; right: 10px; padding: 4px 9px; border-radius: 999px; background: rgba(0, 0, 0, .7); color: #fff; font-size: .75rem; font-weight: 600; line-height: 1.4; pointer-events: none; }
+.task-grid h3 { margin: 0 0 8px; color: var(--blue-ink); }
+.task-grid figcaption { margin-bottom: 14px; }
 .task-grid p { font-size: .9rem; line-height: 1.6; }
+.task-failure { margin-top: 16px; }
+.failure-header, .failure-controls { display: flex; align-items: center; }
+.failure-header { justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 7px; }
+.task-grid .failure-header .task-video-label { margin: 0; }
+.failure-controls { gap: 2px; flex-shrink: 0; }
+.failure-controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #edced8; border-radius: 50%; background: #fff5f8; color: var(--rose-ink); font: inherit; font-size: 1.15rem; cursor: pointer; }
+.failure-controls button:hover { background: #fce4ec; }
+.failure-controls button:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 3px; }
+.failure-count { min-width: 38px; text-align: center; color: var(--muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
+.failure-slide[hidden] { display: none; }
+.task-grid .task-video-label { margin-bottom: 7px; color: var(--rose-ink); font-weight: 700; font-size: .8rem; }
+.task-grid .task-demo-label { color: var(--blue-ink); }
+.task-grid .task-video-caption { margin-top: 7px; color: var(--muted); font-size: .8rem; }
 .result-figure { margin: 28px 0 20px; }
 .result-figure img { width: 100%; }
 .result-figure figcaption { font-size: .9rem; color: var(--muted); line-height: 1.6; margin-top: 15px; }
