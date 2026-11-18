@@ -30,7 +30,7 @@ strong { font-weight: 700; }
 .skip-link { position: fixed; top: -80px; left: 16px; padding: 8px 16px; background: white; z-index: 10; }
 .skip-link:focus { top: 12px; }
 .publication-header { padding: 50px 0 33px; text-align: center; }
-.publication-header h1 { color: var(--paper-primary-dark); font-size: 2.65rem; letter-spacing: -.055rem; }
+.publication-header h1 { margin-bottom: 24px; color: var(--paper-primary-dark); font-size: 2.65rem; letter-spacing: -.055rem; }
 .publication-definition { margin: 12px auto 24px; text-align: center; color: var(--muted); font-family: Georgia, 'Times New Roman', serif; font-size: 1.05rem; line-height: 1.7; }
 .definition-term { white-space: nowrap; }
 .publication-definition dfn { color: #21343e; font-size: 1.1em; font-style: normal; font-weight: 700; }
